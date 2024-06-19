@@ -1,0 +1,21 @@
+##NFS server port is 2049
+##we have to create individual server with in network range of kubernetes cluster
+sudo apt update -y
+sudo apt install nfs-kernel-server -y
+## we are going to create share directory in this NFS server this share directory used in client machines so this client machines using share directory mount the data to this NFS Server
+## creating a directory in this NFS Server
+   sudo mkdir /mnt/nfs_share   (this name can be anything)
+## change the ownership this directory and giving full permissions for this directory
+   sudo chmod 777 -R /mnt/nfs_share
+   sudo chown nobody:nogroup -R /mnt/nfs_share
+now we have to open exports file in this exports we have to specify the whatever directory we have created if we do like this this NFS 
+server allow in which client machines you have shared this directory all the client machines data will be stored in this NFS server
+we have to open /etc/exports
+vi /etc/exports
+/mnt/nfs_share *(rw,sync,no_subtree_check,no_root_squash)
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server 
+## we have to install NFS client software on kubernetes cluster (or)  in all nodes
+ sudo apt install nfs-common -y (client software utils will be vary from os to os)
+if we go to NFS server if we check we can find how many servers get mounted with this NFS server
+   ls /mnt/nfs_share
